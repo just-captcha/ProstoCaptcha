@@ -1,0 +1,156 @@
+﻿# ProstoCaptcha Core
+# UTF-8
+# =====================================================
+# НАСТРОЙКА КОНФИГА
+# 1) Меняйте значения справа от двоеточия.
+# 2) true/false = включить/выключить.
+# 3) После изменений перезапустите прокси.
+# =====================================================
+
+timings:
+  # Время на ввод капчи (секунды)
+  captcha-seconds: 25
+  # Длительность проверки падения (секунды)
+  fall-check-seconds: 3
+  # Анти-спам по кликам (мс)
+  interact-cooldown-ms: 300
+  # Пауза после закрытия интерфейса (мс)
+  close-reclick-ms: 450
+
+captcha:
+  # Длина кода капчи
+  code-length: 6
+  # Допустимые символы (регистр учитывается)
+  alphabet: "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
+
+security:
+  # Минимальная высота падения для зачёта
+  min-fall-distance: 8
+  # Кикать игрока за неверные действия (не тот блок/интерфейс)
+  kick-on-wrong-action: true
+
+world:
+  # Высота сцены с картой капчи
+  map-y: 250
+  # Высота этапа падения
+  fall-y: 215
+  # Если игрок ниже этого Y на острове - телепорт обратно
+  island-min-y: 58
+
+performance:
+  # Режим для слабых хостингов (рекомендуется при 1 ГБ RAM)
+  low-memory-mode: true
+  # Радиус предзагрузки чанков карты
+  map-chunk-preload-radius: 1
+  # Радиус предзагрузки чанков острова
+  island-chunk-preload-radius: 2
+  # Размер кэша последних задач (антиповтор)
+  max-last-task-cache: 1024
+  decor:
+    # Декор острова (цветы/мелкие детали)
+    enabled: false
+
+anti-vpn:
+  # Включить проверку VPN/Proxy на этапе pre-login
+  enabled: true
+  # true: если API провайдеров недоступны -> пускаем
+  # false: если API провайдеров недоступны -> блокируем
+  fail-open: true
+  # Таймаут HTTP-запроса к провайдерам (мс)
+  timeout-ms: 2500
+  # Время кэширования решения по IP (сек)
+  cache-seconds: 21600
+  # Максимум записей в кэше (после переполнения очищается)
+  cache-max-entries: 2048
+  # Белый список IP через запятую, пример: "1.1.1.1,2.2.2.2"
+  whitelist-ips: ""
+  # Белый список ников через запятую, пример: "Admin,Owner"
+  whitelist-nicks: ""
+  # Сообщение кика при блокировке
+  # Доступные плейсхолдеры: {ip}, {provider}, {reason}
+  kick-message: "<gradient:#FB7185:#EF4444><bold>✖ Доступ закрыт: VPN/Proxy обнаружен.</bold></gradient><newline><gray>IP: <white>{ip}</white> • Провайдер: <white>{provider}</white> • Причина: <white>{reason}</white></gray>"
+  providers:
+    proxycheck:
+      # Включить проверку через proxycheck.io
+      enabled: true
+      # %ip% заменяется на IP игрока
+      url: "https://proxycheck.io/v2/%ip%?vpn=1&risk=1&asn=1"
+      # API ключ (если есть), иначе оставьте пустым
+      api-key: ""
+      # Что блокировать
+      block-vpn: true
+      block-proxy: true
+      block-tor: true
+      block-hosting: true
+      # Порог риска (0-100)
+      risk-threshold: 66
+    ip-api:
+      # Резервный провайдер
+      enabled: true
+      url: "http://ip-api.com/json/%ip%?fields=status,message,proxy,hosting,query"
+      block-proxy: true
+      block-hosting: true
+
+messages:
+  # Префикс в чат-сообщениях
+  prefix: "<gradient:#22D3EE:#A78BFA><bold>Анти-бот</bold></gradient> <gray>»</gray> "
+
+  # Заголовок/подзаголовок этапа капчи
+  stage1-title: "<gradient:#67E8F9:#22D3EE><bold>КАПЧА</bold></gradient>"
+  stage1-subtitle: "<white>Введи код с карты в чат</white>"
+
+  # Тексты таймера (этап падения)
+  timer-title: "<gradient:#FDE68A:#F59E0B><bold>ПРОВЕРКА</bold></gradient>"
+  timer-subtitle: "<white>3...2...1...</white>"
+  timer-start: "<white>⏳ <yellow>{seconds}</yellow> сек.</white>"
+  timer-actionbar: "<gradient:#FDE68A:#F59E0B>⏳ {seconds}</gradient>"
+  timer-boss: "<gradient:#FDE68A:#F59E0B>Проверка...</gradient>"
+
+  # Капча
+  captcha-start: "<gray>🧩</gray> <white>Введи код с карты. Время: <yellow>{seconds}</yellow> сек.</white>"
+  captcha-wrong: "<red>✖ Неверная капча.</red> <white>Выдана новая.</white>"
+  captcha-ok: "<green>✔ Капча принята.</green> <white>Переход к следующему этапу.</white>"
+  captcha-timeout: "<red>⏰ Время на капчу вышло. Перезайди.</red>"
+  captcha-image-error: "<yellow>⚠ Не удалось отправить карту, пробую снова.</yellow>"
+  captcha-fail-limit: "<gradient:#FB7185:#EF4444><bold>✖ 3/3 ошибок капчи. Подключись снова.</bold></gradient>"
+
+  # Задания
+  quest-start: "<gray>⚒</gray> <white>Этап заданий начат.</white>"
+  quest-next: "<gradient:#86EFAC:#22C55E>{task}</gradient> <gray>({current}/{required})</gray>"
+  quest-step-done: "<green>✔ Задание выполнено.</green>"
+  quest-all-done: "<gradient:#86EFAC:#22C55E><bold>Проверка пройдена. Передаю в авторизацию...</bold></gradient>"
+  quest-fall-teleport: "<yellow>Ты упал с острова. Возврат на точку проверки.</yellow>"
+
+  # Анти-обход
+  wait-close: "<gray>Закрой интерфейс (ESC) и нажми по нужному блоку снова.</gray>"
+  wrong-block: "<gradient:#FB7185:#EF4444><bold>✖ Нарушение: сломан неверный блок. Доступ закрыт.</bold></gradient>"
+  wrong-open: "<gradient:#FB7185:#EF4444><bold>✖ Нарушение: открыт неверный объект. Доступ закрыт.</bold></gradient>"
+  suspicious: "<gradient:#FB7185:#EF4444><bold>✖ Подозрительная активность. Переподключись.</bold></gradient>"
+  fall-failed: "<red>Проверка не пройдена.</red>"
+
+  # BossBar
+  boss-map: "<gradient:#67E8F9:#22D3EE>Капча: соблюдай регистр букв</gradient>"
+  boss-fall: "<gradient:#FDE68A:#F59E0B>Проверка...</gradient>"
+  boss-quest: "<gradient:#86EFAC:#22C55E>{task} ({current}/{required})</gradient>"
+  boss-ready: "<gradient:#22D3EE:#A78BFA>Анти-бот: подготовка...</gradient>"
+
+tasks:
+  # Названия задач
+  break-log: "Сломай дерево"
+  break-stone: "Добудь камень"
+  break-iron: "Добудь железо"
+  break-coal: "Добудь уголь"
+  break-diamond: "Добудь алмаз"
+  craft-planks: "Сделай доски (верстак: открыть/закрыть)"
+  smelt-iron: "Переплавь железо (печка: открыть/закрыть)"
+  craft-item: "Скрафти предмет (верстак: открыть/закрыть)"
+  open-close-chest: "Открой и закрой сундук"
+  open-close-crafting: "Открой и закрой верстак"
+  open-close-furnace: "Открой и закрой печку"
+  open-close-anvil: "Открой и закрой наковальню"
+
+words:
+  # Формы слова "раз"
+  one: "раз"
+  few: "раза"
+  many: "раз"
