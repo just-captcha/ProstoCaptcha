@@ -94,6 +94,15 @@ public final class CaptchaConfig {
     return trimmed.isEmpty() ? fallback : trimmed;
   }
 
+  public String textOrNull(String key) {
+    String raw = this.values.get(key);
+    if (raw == null) {
+      return null;
+    }
+    String trimmed = raw.trim();
+    return trimmed.isEmpty() ? null : trimmed;
+  }
+
   public int intValue(String key, int fallback, int min, int max) {
     String raw = this.values.get(key);
     if (raw == null || raw.isBlank()) {

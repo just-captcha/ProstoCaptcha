@@ -108,6 +108,7 @@ public final class ProstoCaptchaPlugin {
   private int maxLastTaskCache;
   private boolean islandDecorEnabled;
   private int antiVpnCacheMaxEntries;
+  private String configuredLanguage = "ru";
 
   @Inject
   public ProstoCaptchaPlugin(Logger logger, ProxyServer server, @DataDirectory Path dataDirectory) {
@@ -122,6 +123,7 @@ public final class ProstoCaptchaPlugin {
   @Subscribe
   public void onProxyInitialize(ProxyInitializeEvent event) {
     this.captchaConfig = CaptchaConfig.load(this.dataDirectory, this.logger);
+    this.configuredLanguage = normalizeLanguage(this.captchaConfig.text("settings.language", "ru"));
     this.mapY = this.captchaConfig.mapY();
     this.fallY = this.captchaConfig.fallY();
     this.lowMemoryMode = this.captchaConfig.boolValue("performance.low-memory-mode", true);
@@ -209,10 +211,13 @@ public final class ProstoCaptchaPlugin {
       return;
     }
 
-    String reason = this.captchaConfig.text(
-        "anti-vpn.kick-message",
-        "<red><bold>VPN/Proxy detected.</bold></red><newline><gray>Disable VPN/Proxy and reconnect.</gray>"
-    );
+    String reason = resolveLocalizedText("messages.anti-vpn-kick", "");
+    if (reason.isBlank()) {
+      reason = this.captchaConfig.text(
+          "anti-vpn.kick-message",
+          "<red><bold>VPN/Proxy detected.</bold></red><newline><gray>Disable VPN/Proxy and reconnect.</gray>"
+      );
+    }
     Component message = this.miniMessage.deserialize(
         applyPlaceholders(
             reason,
@@ -267,6 +272,7 @@ public final class ProstoCaptchaPlugin {
     buildMapZone(air);
     buildIslandTerrain(grass, dirt);
     buildIslandResources(air, dirt, stone, coalOre, ironOre, diamondOre, craftingTable, furnace, anvil, chest);
+    buildMandatoryTree(log, leaves);
     if (this.islandDecorEnabled) {
       buildIslandDecor(log, leaves, flowerYellow, flowerRed, tallGrass);
     }
@@ -426,6 +432,11 @@ public final class ProstoCaptchaPlugin {
     this.world.setBlock(ISLAND_CENTER_X, ISLAND_TOP_Y + 1, ISLAND_CENTER_Z + 4, tallGrass);
   }
 
+  private void buildMandatoryTree(VirtualBlock log, VirtualBlock leaves) {
+    // Always keep at least one real tree for BREAK_LOG tasks.
+    placeTree(ISLAND_CENTER_X - 7, ISLAND_TOP_Y + 1, ISLAND_CENTER_Z, log, leaves);
+  }
+
   private void placeTree(int x, int y, int z, VirtualBlock log, VirtualBlock leaves) {
     placeLog(x, y, z, log);
     placeLog(x, y + 1, z, log);
@@ -478,18 +489,47 @@ public final class ProstoCaptchaPlugin {
   public List<CaptchaTask> buildQuestPlan(UUID playerId) {
     TaskType[] values = TaskType.values();
     TaskType previous = this.lastTaskByPlayer.get(playerId);
-    TaskType selected = values[ThreadLocalRandom.current().nextInt(values.length)];
-
-    if (values.length > 1 && previous != null && selected == previous) {
-      int guard = 0;
-      while (selected == previous && guard++ < 16) {
-        selected = values[ThreadLocalRandom.current().nextInt(values.length)];
+    List<TaskType> eligible = new ArrayList<>();
+    for (TaskType value : values) {
+      if (value.isBreakTask() && maxRequiredForTask(value) <= 0) {
+        continue;
       }
+      eligible.add(value);
+    }
+    if (eligible.isEmpty()) {
+      eligible.addAll(List.of(values));
+    }
+    if (eligible.size() > 1 && previous != null) {
+      eligible.remove(previous);
     }
 
+    TaskType selected = eligible.get(ThreadLocalRandom.current().nextInt(eligible.size()));
     rememberLastTask(playerId, selected);
-    int required = selected.isBreakTask() ? ThreadLocalRandom.current().nextInt(1, 4) : 1;
+    int required;
+    if (selected.isBreakTask()) {
+      int maxRequired = Math.max(1, maxRequiredForTask(selected));
+      required = ThreadLocalRandom.current().nextInt(1, maxRequired + 1);
+    } else {
+      required = 1;
+    }
     return List.of(new CaptchaTask(selected, required));
+  }
+
+  private int maxRequiredForTask(TaskType taskType) {
+    if (!taskType.isBreakTask()) {
+      return 1;
+    }
+
+    int configuredMax = this.captchaConfig.intValue("tasks.break-required-max", 3, 1, 32);
+    int available = switch (taskType) {
+      case BREAK_LOG -> this.logBlocks.size();
+      case BREAK_STONE -> this.stoneBlocks.size();
+      case BREAK_IRON -> this.ironBlocks.size();
+      case BREAK_COAL -> this.coalBlocks.size();
+      case BREAK_DIAMOND -> this.diamondBlocks.size();
+      default -> 0;
+    };
+    return Math.min(configuredMax, Math.max(0, available));
   }
 
   private void rememberLastTask(UUID playerId, TaskType selected) {
@@ -911,33 +951,65 @@ public final class ProstoCaptchaPlugin {
   }
 
   public Component message(String key, String fallback, Map<String, String> placeholders) {
-    String template = this.captchaConfig.text(key, fallback);
-    String prefixed = this.captchaConfig.text("messages.prefix", "") + template;
+    String template = resolveLocalizedText(key, fallback);
+    String prefixed = resolveLocalizedText("messages.prefix", "") + template;
     return this.miniMessage.deserialize(applyPlaceholders(prefixed, placeholders));
   }
 
   public Component messageNoPrefix(String key, String fallback, Map<String, String> placeholders) {
-    String template = this.captchaConfig.text(key, fallback);
+    String template = resolveLocalizedText(key, fallback);
     return this.miniMessage.deserialize(applyPlaceholders(template, placeholders));
   }
 
   public String taskText(TaskType type) {
     return switch (type) {
-      case BREAK_LOG -> this.captchaConfig.text("tasks.break-log", "Сломай дерево");
-      case BREAK_STONE -> this.captchaConfig.text("tasks.break-stone", "Добудь камень");
-      case BREAK_IRON -> this.captchaConfig.text("tasks.break-iron", "Добудь железо");
-      case BREAK_COAL -> this.captchaConfig.text("tasks.break-coal", "Добудь уголь");
-      case BREAK_DIAMOND -> this.captchaConfig.text("tasks.break-diamond", "Добудь алмаз");
-      case CRAFT_PLANKS -> this.captchaConfig.text("tasks.craft-planks", "Сделай доски");
-      case SMELT_IRON -> this.captchaConfig.text("tasks.smelt-iron", "Переплавь железо");
-      case CRAFT_ITEM -> this.captchaConfig.text("tasks.craft-item", "Скрафти предмет");
-      case OPEN_CLOSE_CHEST -> this.captchaConfig.text("tasks.open-close-chest", "Открой и закрой сундук");
-      case OPEN_CLOSE_CRAFTING -> this.captchaConfig.text("tasks.open-close-crafting", "Открой и закрой верстак");
-      case OPEN_CLOSE_FURNACE -> this.captchaConfig.text("tasks.open-close-furnace", "Открой и закрой печку");
-      case OPEN_CLOSE_ANVIL -> this.captchaConfig.text("tasks.open-close-anvil", "Открой и закрой наковальню");
+      case BREAK_LOG -> resolveLocalizedText("messages.tasks.break-log", languageFallback("Сломай дерево", "Break a log"));
+      case BREAK_STONE -> resolveLocalizedText("messages.tasks.break-stone", languageFallback("Добудь камень", "Mine stone"));
+      case BREAK_IRON -> resolveLocalizedText("messages.tasks.break-iron", languageFallback("Добудь железо", "Mine iron ore"));
+      case BREAK_COAL -> resolveLocalizedText("messages.tasks.break-coal", languageFallback("Добудь уголь", "Mine coal ore"));
+      case BREAK_DIAMOND -> resolveLocalizedText("messages.tasks.break-diamond", languageFallback("Добудь алмаз", "Mine diamond ore"));
+      case CRAFT_PLANKS -> resolveLocalizedText("messages.tasks.craft-planks", languageFallback("Сделай доски", "Craft planks"));
+      case SMELT_IRON -> resolveLocalizedText("messages.tasks.smelt-iron", languageFallback("Переплавь железо", "Smelt iron"));
+      case CRAFT_ITEM -> resolveLocalizedText("messages.tasks.craft-item", languageFallback("Скрафти предмет", "Craft an item"));
+      case OPEN_CLOSE_CHEST -> resolveLocalizedText("messages.tasks.open-close-chest", languageFallback("Открой и закрой сундук", "Open and close the chest"));
+      case OPEN_CLOSE_CRAFTING -> resolveLocalizedText("messages.tasks.open-close-crafting", languageFallback("Открой и закрой верстак", "Open and close the crafting table"));
+      case OPEN_CLOSE_FURNACE -> resolveLocalizedText("messages.tasks.open-close-furnace", languageFallback("Открой и закрой печку", "Open and close the furnace"));
+      case OPEN_CLOSE_ANVIL -> resolveLocalizedText("messages.tasks.open-close-anvil", languageFallback("Открой и закрой наковальню", "Open and close the anvil"));
     };
   }
 
+  private String resolveLocalizedText(String key, String fallback) {
+    if (key == null || key.isBlank()) {
+      return fallback == null ? "" : fallback;
+    }
+
+    if (key.startsWith("messages.")) {
+      String subKey = key.substring("messages.".length());
+      String localizedKey = "messages." + this.configuredLanguage + "." + subKey;
+      String localized = this.captchaConfig.textOrNull(localizedKey);
+      if (localized != null) {
+        return localized;
+      }
+    }
+
+    String direct = this.captchaConfig.textOrNull(key);
+    if (direct != null) {
+      return direct;
+    }
+    return fallback == null ? "" : fallback;
+  }
+
+  private String languageFallback(String ru, String en) {
+    return "en".equals(this.configuredLanguage) ? en : ru;
+  }
+
+  private String normalizeLanguage(String raw) {
+    if (raw == null) {
+      return "ru";
+    }
+    String lower = raw.trim().toLowerCase(Locale.ROOT);
+    return "en".equals(lower) ? "en" : "ru";
+  }
   private String applyPlaceholders(String value, Map<String, String> placeholders) {
     String out = value == null ? "" : value;
     if (placeholders == null || placeholders.isEmpty()) {
@@ -1031,3 +1103,4 @@ public final class ProstoCaptchaPlugin {
     }
   }
 }
+

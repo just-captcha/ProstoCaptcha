@@ -1,156 +1,238 @@
-﻿# ProstoCaptcha Core
-# UTF-8
-# =====================================================
-# НАСТРОЙКА КОНФИГА
-# 1) Меняйте значения справа от двоеточия.
-# 2) true/false = включить/выключить.
-# 3) После изменений перезапустите прокси.
-# =====================================================
+# ProstoCaptcha Core
+# =========================================
+# RU/EN config
+# language: ru | en
+# =========================================
+
+settings:
+  # RU: Язык плагина (ru/en)
+  # EN: Plugin language (ru/en)
+  language: ru
 
 timings:
-  # Время на ввод капчи (секунды)
+  # RU: Время на ввод капчи (сек)
+  # EN: Time to solve captcha (seconds)
   captcha-seconds: 25
-  # Длительность проверки падения (секунды)
+
+  # RU: Длительность проверки падения (сек)
+  # EN: Fall-check stage duration (seconds)
   fall-check-seconds: 3
-  # Анти-спам по кликам (мс)
+
+  # RU: Защита от спама кликами (мс)
+  # EN: Click spam protection cooldown (ms)
   interact-cooldown-ms: 300
-  # Пауза после закрытия интерфейса (мс)
+
+  # RU: Минимальная пауза между "открыл/закрыл" повторным кликом (мс)
+  # EN: Minimum delay for second click on open/close tasks (ms)
   close-reclick-ms: 450
 
 captcha:
-  # Длина кода капчи
+  # RU: Длина кода капчи
+  # EN: Captcha code length
   code-length: 6
-  # Допустимые символы (регистр учитывается)
+
+  # RU: Алфавит символов для капчи
+  # EN: Captcha character alphabet
   alphabet: "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
 
 security:
-  # Минимальная высота падения для зачёта
+  # RU: Минимальная дистанция падения для зачёта
+  # EN: Minimum fall distance to pass
   min-fall-distance: 8
-  # Кикать игрока за неверные действия (не тот блок/интерфейс)
+
+  # RU: Кикать за неверные действия (не тот блок/интерфейс)
+  # EN: Kick on wrong action (wrong block/open target)
   kick-on-wrong-action: true
 
 world:
-  # Высота сцены с картой капчи
+  # RU: Высота сцены с капчей-картой
+  # EN: Y-level of captcha map stage
   map-y: 250
-  # Высота этапа падения
+
+  # RU: Высота этапа падения
+  # EN: Y-level of fall-check stage
   fall-y: 215
-  # Если игрок ниже этого Y на острове - телепорт обратно
+
+  # RU: Если игрок падает ниже, вернуть на остров
+  # EN: Teleport player back to island if below this Y
   island-min-y: 58
 
 performance:
-  # Режим для слабых хостингов (рекомендуется при 1 ГБ RAM)
+  # RU: Режим для слабых хостов (меньше RAM/CPU)
+  # EN: Low-memory mode for weak hosts
   low-memory-mode: true
-  # Радиус предзагрузки чанков карты
+
+  # RU: Радиус предзагрузки чанков карты
+  # EN: Map chunk preload radius
   map-chunk-preload-radius: 1
-  # Радиус предзагрузки чанков острова
+
+  # RU: Радиус предзагрузки чанков острова
+  # EN: Island chunk preload radius
   island-chunk-preload-radius: 2
-  # Размер кэша последних задач (антиповтор)
+
+  # RU: Размер кэша последних заданий игроков
+  # EN: Last-task cache size
   max-last-task-cache: 1024
+
   decor:
-    # Декор острова (цветы/мелкие детали)
+    # RU: Дополнительный декор острова
+    # EN: Extra island decoration
     enabled: false
 
 anti-vpn:
-  # Включить проверку VPN/Proxy на этапе pre-login
+  # RU: Включить проверку VPN/Proxy
+  # EN: Enable VPN/Proxy check
   enabled: true
-  # true: если API провайдеров недоступны -> пускаем
-  # false: если API провайдеров недоступны -> блокируем
+
+  # RU: true = если API недоступны, пускать игрока
+  # EN: true = allow player if providers are unavailable
   fail-open: true
-  # Таймаут HTTP-запроса к провайдерам (мс)
+
+  # RU: Таймаут HTTP запроса к провайдерам (мс)
+  # EN: HTTP timeout for providers (ms)
   timeout-ms: 2500
-  # Время кэширования решения по IP (сек)
+
+  # RU: Время кэша решения по IP (сек)
+  # EN: Decision cache TTL per IP (seconds)
   cache-seconds: 21600
-  # Максимум записей в кэше (после переполнения очищается)
+
+  # RU: Максимум записей в anti-vpn кэше
+  # EN: Maximum entries in anti-vpn cache
   cache-max-entries: 2048
-  # Белый список IP через запятую, пример: "1.1.1.1,2.2.2.2"
+
+  # RU: Белый список IP через запятую
+  # EN: Comma-separated IP whitelist
   whitelist-ips: ""
-  # Белый список ников через запятую, пример: "Admin,Owner"
+
+  # RU: Белый список ников через запятую
+  # EN: Comma-separated nickname whitelist
   whitelist-nicks: ""
-  # Сообщение кика при блокировке
-  # Доступные плейсхолдеры: {ip}, {provider}, {reason}
-  kick-message: "<gradient:#FB7185:#EF4444><bold>✖ Доступ закрыт: VPN/Proxy обнаружен.</bold></gradient><newline><gray>IP: <white>{ip}</white> • Провайдер: <white>{provider}</white> • Причина: <white>{reason}</white></gray>"
+
+  # RU: Сообщение кика. Плейсхолдеры: {ip} {provider} {reason}
+  # EN: Kick message. Placeholders: {ip} {provider} {reason}
+  kick-message: "<gradient:#FB7185:#EF4444><bold>✖ VPN/Proxy detected.</bold></gradient><newline><gray>IP: <white>{ip}</white> • Provider: <white>{provider}</white> • Reason: <white>{reason}</white></gray>"
+
   providers:
     proxycheck:
-      # Включить проверку через proxycheck.io
       enabled: true
-      # %ip% заменяется на IP игрока
       url: "https://proxycheck.io/v2/%ip%?vpn=1&risk=1&asn=1"
-      # API ключ (если есть), иначе оставьте пустым
       api-key: ""
-      # Что блокировать
       block-vpn: true
       block-proxy: true
       block-tor: true
       block-hosting: true
-      # Порог риска (0-100)
       risk-threshold: 66
+
     ip-api:
-      # Резервный провайдер
       enabled: true
       url: "http://ip-api.com/json/%ip%?fields=status,message,proxy,hosting,query"
       block-proxy: true
       block-hosting: true
 
-messages:
-  # Префикс в чат-сообщениях
-  prefix: "<gradient:#22D3EE:#A78BFA><bold>Анти-бот</bold></gradient> <gray>»</gray> "
-
-  # Заголовок/подзаголовок этапа капчи
-  stage1-title: "<gradient:#67E8F9:#22D3EE><bold>КАПЧА</bold></gradient>"
-  stage1-subtitle: "<white>Введи код с карты в чат</white>"
-
-  # Тексты таймера (этап падения)
-  timer-title: "<gradient:#FDE68A:#F59E0B><bold>ПРОВЕРКА</bold></gradient>"
-  timer-subtitle: "<white>3...2...1...</white>"
-  timer-start: "<white>⏳ <yellow>{seconds}</yellow> сек.</white>"
-  timer-actionbar: "<gradient:#FDE68A:#F59E0B>⏳ {seconds}</gradient>"
-  timer-boss: "<gradient:#FDE68A:#F59E0B>Проверка...</gradient>"
-
-  # Капча
-  captcha-start: "<gray>🧩</gray> <white>Введи код с карты. Время: <yellow>{seconds}</yellow> сек.</white>"
-  captcha-wrong: "<red>✖ Неверная капча.</red> <white>Выдана новая.</white>"
-  captcha-ok: "<green>✔ Капча принята.</green> <white>Переход к следующему этапу.</white>"
-  captcha-timeout: "<red>⏰ Время на капчу вышло. Перезайди.</red>"
-  captcha-image-error: "<yellow>⚠ Не удалось отправить карту, пробую снова.</yellow>"
-  captcha-fail-limit: "<gradient:#FB7185:#EF4444><bold>✖ 3/3 ошибок капчи. Подключись снова.</bold></gradient>"
-
-  # Задания
-  quest-start: "<gray>⚒</gray> <white>Этап заданий начат.</white>"
-  quest-next: "<gradient:#86EFAC:#22C55E>{task}</gradient> <gray>({current}/{required})</gray>"
-  quest-step-done: "<green>✔ Задание выполнено.</green>"
-  quest-all-done: "<gradient:#86EFAC:#22C55E><bold>Проверка пройдена. Передаю в авторизацию...</bold></gradient>"
-  quest-fall-teleport: "<yellow>Ты упал с острова. Возврат на точку проверки.</yellow>"
-
-  # Анти-обход
-  wait-close: "<gray>Закрой интерфейс (ESC) и нажми по нужному блоку снова.</gray>"
-  wrong-block: "<gradient:#FB7185:#EF4444><bold>✖ Нарушение: сломан неверный блок. Доступ закрыт.</bold></gradient>"
-  wrong-open: "<gradient:#FB7185:#EF4444><bold>✖ Нарушение: открыт неверный объект. Доступ закрыт.</bold></gradient>"
-  suspicious: "<gradient:#FB7185:#EF4444><bold>✖ Подозрительная активность. Переподключись.</bold></gradient>"
-  fall-failed: "<red>Проверка не пройдена.</red>"
-
-  # BossBar
-  boss-map: "<gradient:#67E8F9:#22D3EE>Капча: соблюдай регистр букв</gradient>"
-  boss-fall: "<gradient:#FDE68A:#F59E0B>Проверка...</gradient>"
-  boss-quest: "<gradient:#86EFAC:#22C55E>{task} ({current}/{required})</gradient>"
-  boss-ready: "<gradient:#22D3EE:#A78BFA>Анти-бот: подготовка...</gradient>"
-
 tasks:
-  # Названия задач
-  break-log: "Сломай дерево"
-  break-stone: "Добудь камень"
-  break-iron: "Добудь железо"
-  break-coal: "Добудь уголь"
-  break-diamond: "Добудь алмаз"
-  craft-planks: "Сделай доски (верстак: открыть/закрыть)"
-  smelt-iron: "Переплавь железо (печка: открыть/закрыть)"
-  craft-item: "Скрафти предмет (верстак: открыть/закрыть)"
-  open-close-chest: "Открой и закрой сундук"
-  open-close-crafting: "Открой и закрой верстак"
-  open-close-furnace: "Открой и закрой печку"
-  open-close-anvil: "Открой и закрой наковальню"
+  # RU: Максимум количества для задач ломания (1..N)
+  # EN: Max required count for break tasks (1..N)
+  break-required-max: 3
 
-words:
-  # Формы слова "раз"
-  one: "раз"
-  few: "раза"
-  many: "раз"
+messages:
+  ru:
+    prefix: "<gradient:#22D3EE:#A78BFA><bold>Анти-бот</bold></gradient> <gray>»</gray> "
+
+    stage1-title: "<gradient:#67E8F9:#22D3EE><bold>КАПЧА</bold></gradient>"
+    stage1-subtitle: "<white>Введи код с карты в чат</white>"
+
+    timer-title: "<gradient:#FDE68A:#F59E0B><bold>ПРОВЕРКА</bold></gradient>"
+    timer-subtitle: "<white>3...2...1...</white>"
+    timer-start: "<white>⏳ <yellow>{seconds}</yellow> сек.</white>"
+    timer-actionbar: "<gradient:#FDE68A:#F59E0B>⏳ {seconds}</gradient>"
+    timer-boss: "<gradient:#FDE68A:#F59E0B>Проверка...</gradient>"
+
+    captcha-start: "<gray>🧩</gray> <white>Введи код с карты. Время: <yellow>{seconds}</yellow> сек.</white>"
+    captcha-wrong: "<red>✖ Неверная капча.</red> <white>Выдана новая.</white>"
+    captcha-ok: "<green>✔ Капча принята.</green> <white>Переход к следующему этапу.</white>"
+    captcha-timeout: "<red>⏰ Время на капчу вышло. Перезайди.</red>"
+    captcha-image-error: "<yellow>⚠ Не удалось отправить карту, пробую снова.</yellow>"
+    captcha-fail-limit: "<gradient:#FB7185:#EF4444><bold>✖ 3/3 ошибок капчи. Подключись снова.</bold></gradient>"
+    anti-vpn-kick: "<gradient:#FB7185:#EF4444><bold>✖ Обнаружен VPN/Proxy. Доступ закрыт.</bold></gradient><newline><gray>IP: <white>{ip}</white> • Провайдер: <white>{provider}</white> • Причина: <white>{reason}</white></gray>"
+
+    quest-start: "<gray>⚒</gray> <white>Этап заданий начат.</white>"
+    quest-next: "<gradient:#86EFAC:#22C55E>{task}</gradient> <gray>({current}/{required})</gray>"
+    quest-step-done: "<green>✔ Задание выполнено.</green>"
+    quest-all-done: "<gradient:#86EFAC:#22C55E><bold>Проверка пройдена. Передаю в авторизацию...</bold></gradient>"
+    quest-fall-teleport: "<yellow>Ты упал с острова. Возврат на точку проверки.</yellow>"
+
+    wait-close: "<gray>Закрой интерфейс (ESC) и нажми по нужному блоку снова.</gray>"
+    wrong-block: "<gradient:#FB7185:#EF4444><bold>✖ Нарушение: сломан неверный блок. Доступ закрыт.</bold></gradient>"
+    wrong-open: "<gradient:#FB7185:#EF4444><bold>✖ Нарушение: открыт неверный объект. Доступ закрыт.</bold></gradient>"
+    suspicious: "<gradient:#FB7185:#EF4444><bold>✖ Подозрительная активность. Переподключись.</bold></gradient>"
+    fall-failed: "<red>Проверка не пройдена.</red>"
+
+    boss-map: "<gradient:#67E8F9:#22D3EE>Капча: соблюдай регистр букв</gradient>"
+    boss-fall: "<gradient:#FDE68A:#F59E0B>Проверка...</gradient>"
+    boss-quest: "<gradient:#86EFAC:#22C55E>{task} ({current}/{required})</gradient>"
+    boss-ready: "<gradient:#22D3EE:#A78BFA>Анти-бот: подготовка...</gradient>"
+
+    tasks:
+      break-log: "Сломай дерево"
+      break-stone: "Добудь камень"
+      break-iron: "Добудь железо"
+      break-coal: "Добудь уголь"
+      break-diamond: "Добудь алмаз"
+      craft-planks: "Сделай доски"
+      smelt-iron: "Переплавь железо"
+      craft-item: "Скрафти предмет"
+      open-close-chest: "Открой и закрой сундук"
+      open-close-crafting: "Открой и закрой верстак"
+      open-close-furnace: "Открой и закрой печку"
+      open-close-anvil: "Открой и закрой наковальню"
+
+  en:
+    prefix: "<gradient:#22D3EE:#A78BFA><bold>Anti-Bot</bold></gradient> <gray>»</gray> "
+
+    stage1-title: "<gradient:#67E8F9:#22D3EE><bold>CAPTCHA</bold></gradient>"
+    stage1-subtitle: "<white>Type the map code in chat</white>"
+
+    timer-title: "<gradient:#FDE68A:#F59E0B><bold>CHECK</bold></gradient>"
+    timer-subtitle: "<white>3...2...1...</white>"
+    timer-start: "<white>⏳ <yellow>{seconds}</yellow> sec.</white>"
+    timer-actionbar: "<gradient:#FDE68A:#F59E0B>⏳ {seconds}</gradient>"
+    timer-boss: "<gradient:#FDE68A:#F59E0B>Checking...</gradient>"
+
+    captcha-start: "<gray>🧩</gray> <white>Type the map code. Time: <yellow>{seconds}</yellow> sec.</white>"
+    captcha-wrong: "<red>✖ Wrong captcha.</red> <white>Generated a new one.</white>"
+    captcha-ok: "<green>✔ Captcha accepted.</green> <white>Moving to next stage.</white>"
+    captcha-timeout: "<red>⏰ Captcha time is over. Reconnect.</red>"
+    captcha-image-error: "<yellow>⚠ Failed to send captcha image, retrying.</yellow>"
+    captcha-fail-limit: "<gradient:#FB7185:#EF4444><bold>✖ 3/3 captcha fails. Reconnect.</bold></gradient>"
+    anti-vpn-kick: "<gradient:#FB7185:#EF4444><bold>✖ VPN/Proxy detected. Access denied.</bold></gradient><newline><gray>IP: <white>{ip}</white> • Provider: <white>{provider}</white> • Reason: <white>{reason}</white></gray>"
+
+    quest-start: "<gray>⚒</gray> <white>Quest stage started.</white>"
+    quest-next: "<gradient:#86EFAC:#22C55E>{task}</gradient> <gray>({current}/{required})</gray>"
+    quest-step-done: "<green>✔ Task completed.</green>"
+    quest-all-done: "<gradient:#86EFAC:#22C55E><bold>Verification complete. Sending to auth...</bold></gradient>"
+    quest-fall-teleport: "<yellow>You fell off the island. Returning to check point.</yellow>"
+
+    wait-close: "<gray>Close the UI (ESC) and click the required block again.</gray>"
+    wrong-block: "<gradient:#FB7185:#EF4444><bold>✖ Violation: wrong block broken. Access denied.</bold></gradient>"
+    wrong-open: "<gradient:#FB7185:#EF4444><bold>✖ Violation: wrong container opened. Access denied.</bold></gradient>"
+    suspicious: "<gradient:#FB7185:#EF4444><bold>✖ Suspicious activity detected. Reconnect.</bold></gradient>"
+    fall-failed: "<red>Check failed.</red>"
+
+    boss-map: "<gradient:#67E8F9:#22D3EE>Captcha: keep letter case</gradient>"
+    boss-fall: "<gradient:#FDE68A:#F59E0B>Checking...</gradient>"
+    boss-quest: "<gradient:#86EFAC:#22C55E>{task} ({current}/{required})</gradient>"
+    boss-ready: "<gradient:#22D3EE:#A78BFA>Anti-Bot: preparing...</gradient>"
+
+    tasks:
+      break-log: "Break a log"
+      break-stone: "Mine stone"
+      break-iron: "Mine iron ore"
+      break-coal: "Mine coal ore"
+      break-diamond: "Mine diamond ore"
+      craft-planks: "Craft planks"
+      smelt-iron: "Smelt iron"
+      craft-item: "Craft an item"
+      open-close-chest: "Open and close the chest"
+      open-close-crafting: "Open and close the crafting table"
+      open-close-furnace: "Open and close the furnace"
+      open-close-anvil: "Open and close the anvil"
