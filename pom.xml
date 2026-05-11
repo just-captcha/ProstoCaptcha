@@ -1,85 +1,77 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>me.prostoac</groupId>
-    <artifactId>prosto-captcha-core</artifactId>
-    <version>1.2.2</version>
-    <name>ProstoCaptchaCore</name>
-    <packaging>jar</packaging>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>17</maven.compiler.release>
-        <velocity.version>3.4.0-SNAPSHOT</velocity.version>
-        <limboapi.version>1.1.27</limboapi.version>
-    </properties>
-
-    <repositories>
-        <repository>
-            <id>papermc-repo</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>elytrium-repo</id>
-            <url>https://maven.elytrium.net/repo/</url>
-        </repository>
-        <repository>
-            <id>maven-central</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.velocitypowered</groupId>
-            <artifactId>velocity-api</artifactId>
-            <version>${velocity.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.velocitypowered</groupId>
-            <artifactId>velocity-proxy</artifactId>
-            <version>${velocity.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.velocitypowered</groupId>
-                    <artifactId>velocity-native</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.velocitypowered</groupId>
-                    <artifactId>velocity-proxy-log4j2-plugin</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>net.elytrium.limboapi</groupId>
-            <artifactId>api</artifactId>
-            <version>${limboapi.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.1</version>
-                <configuration>
-                    <release>${maven.compiler.release}</release>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>com.velocitypowered</groupId>
-                            <artifactId>velocity-api</artifactId>
-                            <version>${velocity.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+<groupId>me.prostoac</groupId>
+<artifactId>prosto-captcha-core</artifactId>
+<version>1.1.0</version>
+<name>ProstoCaptchaCore</name>
+<packaging>jar</packaging>
+<properties>
+<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+<maven.compiler.release>17</maven.compiler.release>
+<velocity.version>3.4.0-SNAPSHOT</velocity.version>
+<limboapi.version>1.1.27</limboapi.version>
+</properties>
+<repositories>
+<repository>
+<id>papermc-repo</id>
+<url>https://repo.papermc.io/repository/maven-public/</url>
+</repository>
+<repository>
+<id>elytrium-repo</id>
+<url>https://maven.elytrium.net/repo/</url>
+</repository>
+<repository>
+<id>maven-central</id>
+<url>https://repo1.maven.org/maven2/</url>
+</repository>
+</repositories>
+<dependencies>
+<dependency>
+<groupId>com.velocitypowered</groupId>
+<artifactId>velocity-api</artifactId>
+<version>${velocity.version}</version>
+<scope>provided</scope>
+</dependency>
+<dependency>
+<groupId>com.velocitypowered</groupId>
+<artifactId>velocity-proxy</artifactId>
+<version>${velocity.version}</version>
+<scope>provided</scope>
+<exclusions>
+<exclusion>
+<groupId>com.velocitypowered</groupId>
+<artifactId>velocity-native</artifactId>
+</exclusion>
+<exclusion>
+<groupId>com.velocitypowered</groupId>
+<artifactId>velocity-proxy-log4j2-plugin</artifactId>
+</exclusion>
+</exclusions>
+</dependency>
+<dependency>
+<groupId>net.elytrium.limboapi</groupId>
+<artifactId>api</artifactId>
+<version>${limboapi.version}</version>
+<scope>provided</scope>
+</dependency>
+</dependencies>
+<build>
+<plugins>
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-compiler-plugin</artifactId>
+<version>3.14.1</version>
+<configuration>
+<release>${maven.compiler.release}</release>
+<annotationProcessorPaths>
+<path>
+<groupId>com.velocitypowered</groupId>
+<artifactId>velocity-api</artifactId>
+<version>${velocity.version}</version>
+</path>
+</annotationProcessorPaths>
+</configuration>
+</plugin>
+</plugins>
+</build>
 </project>
